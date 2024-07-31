@@ -1,3 +1,4 @@
+# presentation/cli.py
 import asyncio
 from application.quiz_service import QuizService
 from domain.value_objects import QuizResult
@@ -11,10 +12,10 @@ class CLI:
         print(
             "Welcome to the Extremely Overengineered Quiz App! Type 'quit' to exit at any time."
         )
-        self.quiz_service.start_quiz()
+        await self.quiz_service.start_quiz()
 
         while True:
-            question = self.quiz_service.get_next_question()
+            question = await self.quiz_service.get_next_question()
             print(f"\n{question.get_text()}")
             for i, answer in enumerate(question.get_answers()):
                 print(f"{i + 1}. {answer.text}")
@@ -28,7 +29,7 @@ class CLI:
             try:
                 user_choice = int(user_input) - 1
                 if 0 <= user_choice < len(question.get_answers()):
-                    is_correct = self.quiz_service.submit_answer(user_choice)
+                    is_correct = await self.quiz_service.submit_answer(user_choice)
                     if is_correct:
                         print("Correct!")
                     else:
@@ -40,7 +41,7 @@ class CLI:
             except ValueError:
                 print("Invalid input. Please enter a number.")
 
-        result = self.quiz_service.end_quiz()
+        result = await self.quiz_service.end_quiz()
         print(
             f"Thanks for playing! Your final score: {result.correct_answers}/{result.total_questions}"
         )
